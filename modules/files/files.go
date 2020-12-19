@@ -24,6 +24,16 @@ func FileExistsE(path string) (bool, error) {
 	return err == nil, nil
 }
 
+// DirExistsE returns true if the given file exists
+// It will return an error if os.Stat error is a ErrNotExist
+func DirExistsE(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err != nil && os.IsNotExist(err) {
+		return false, err
+	}
+	return err == nil, nil
+}
+
 // IsExistingFile returns true if the path exists and is a file.
 func IsExistingFile(path string) bool {
 	fileInfo, err := os.Stat(path)
@@ -74,6 +84,11 @@ func CopyTerragruntFolderToTemp(folderPath string, tempFolderPrefix string) (str
 // CopyFolderToTemp creates a copy of the given folder and all its filtered contents in a temp folder
 // with a unique name and the given prefix.
 func CopyFolderToTemp(folderPath string, tempFolderPrefix string, filter func(path string) bool) (string, error) {
+	_, err := DirExistsE(folderPath)
+	if err != nil {
+		return "", err
+	}
+
 	tmpDir, err := ioutil.TempDir("", tempFolderPrefix)
 	if err != nil {
 		return "", err

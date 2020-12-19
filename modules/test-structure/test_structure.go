@@ -72,6 +72,13 @@ func CopyTerraformFolderToTemp(t testing.TestingT, rootFolder string, terraformM
 		return filepath.Join(rootFolder, terraformModuleFolder)
 	}
 
+	fullTerraformModuleFolder := filepath.Join(rootFolder, terraformModuleFolder)
+
+	_, err := files.DirExistsE(fullTerraformModuleFolder)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	tmpRootFolder, err := files.CopyTerraformFolderToTemp(rootFolder, cleanName(t.Name()))
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +87,7 @@ func CopyTerraformFolderToTemp(t testing.TestingT, rootFolder string, terraformM
 	tmpTestFolder := filepath.Join(tmpRootFolder, terraformModuleFolder)
 
 	// Log temp folder so we can see it
-	logger.Logf(t, "Copied terraform folder %s to %s", filepath.Join(rootFolder, terraformModuleFolder), tmpTestFolder)
+	logger.Logf(t, "Copied terraform folder %s to %s", fullTerraformModuleFolder, tmpTestFolder)
 
 	return tmpTestFolder
 }
