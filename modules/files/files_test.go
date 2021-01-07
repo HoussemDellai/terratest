@@ -24,21 +24,6 @@ func TestFileExists(t *testing.T) {
 	assert.False(t, FileExists("/not/a/real/path"))
 }
 
-func TestDirExistsE(t *testing.T) {
-	t.Parallel()
-
-	expectedError := new(os.PathError)
-	currentFile, err := filepath.Abs(os.Args[0])
-	require.NoError(t, err)
-
-	exists1, err := DirExistsE(currentFile)
-	assert.True(t, exists1)
-
-	exists2, err := DirExistsE("/not/a/real/path")
-	assert.False(t, exists2)
-	assert.IsType(t, expectedError, err)
-}
-
 func TestIsExistingFile(t *testing.T) {
 	t.Parallel()
 
@@ -66,20 +51,20 @@ func TestIsExistingDir(t *testing.T) {
 func TestCopyFolderToTemp(t *testing.T) {
 	t.Parallel()
 
-	expectedErrorType := new(os.PathError)
 	tempFolderPrefix := "someprefix"
-	currentFile, err := filepath.Abs(os.Args[0])
+	tmpDir, err := ioutil.TempDir("", "TestCopyFolderContents")
 	require.NoError(t, err)
 
-	currentFileDir := filepath.Dir(currentFile)
 	filter := func(path string) bool {
 		return !PathContainsHiddenFileOrFolder(path) && !PathContainsTerraformState(path)
 	}
 
-	_, err = CopyFolderToTemp("/not/a/real/path", tempFolderPrefix, filter)
-	assert.IsType(t, expectedErrorType, err)
+	folder, err := CopyFolderToTemp("/not/a/real/path", tempFolderPrefix, filter)
+	require.Error(t, err)
+	exists := FileExists(folder)
+	assert.False(t, exists)
 
-	folder, err := CopyFolderToTemp(currentFileDir, tempFolderPrefix, filter)
+	folder, err = CopyFolderToTemp(tmpDir, tempFolderPrefix, filter)
 	assert.DirExists(t, folder)
 	assert.Nil(t, err)
 }
