@@ -2,6 +2,7 @@
 package files
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -79,7 +80,7 @@ func CopyFolderToTemp(folderPath string, tempFolderPrefix string, filter func(pa
 		return "", err
 	}
 	if !exists {
-		return "", os.ErrNotExist
+		return "", errors.New("Provided folder does not exist: " + folderPath)
 	}
 
 	tmpDir, err := ioutil.TempDir("", tempFolderPrefix)

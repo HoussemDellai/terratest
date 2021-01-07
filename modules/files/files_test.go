@@ -61,12 +61,11 @@ func TestCopyFolderToTemp(t *testing.T) {
 
 	folder, err := CopyFolderToTemp("/not/a/real/path", tempFolderPrefix, filter)
 	require.Error(t, err)
-	exists := FileExists(folder)
-	assert.False(t, exists)
+	assert.False(t, FileExists(folder))
 
 	folder, err = CopyFolderToTemp(tmpDir, tempFolderPrefix, filter)
 	assert.DirExists(t, folder)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 }
 
 func TestCopyFolderContents(t *testing.T) {

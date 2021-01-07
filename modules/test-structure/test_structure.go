@@ -10,6 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/stretchr/testify/require"
 )
 
 // SKIP_STAGE_ENV_VAR_PREFIX is the prefix used for skipping stage environment variables.
@@ -75,9 +76,7 @@ func CopyTerraformFolderToTemp(t testing.TestingT, rootFolder string, terraformM
 	fullTerraformModuleFolder := filepath.Join(rootFolder, terraformModuleFolder)
 
 	exists, err := files.FileExistsE(fullTerraformModuleFolder)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	if !exists {
 		t.Fatal(os.ErrNotExist, fullTerraformModuleFolder)
 	}
