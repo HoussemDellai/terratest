@@ -78,7 +78,7 @@ func CopyTerraformFolderToTemp(t testing.TestingT, rootFolder string, terraformM
 	exists, err := files.FileExistsE(fullTerraformModuleFolder)
 	require.NoError(t, err)
 	if !exists {
-		t.Fatal(os.ErrNotExist, fullTerraformModuleFolder)
+		t.Fatal(files.DirNotFoundError{Directory: fullTerraformModuleFolder})
 	}
 
 	tmpRootFolder, err := files.CopyTerraformFolderToTemp(rootFolder, cleanName(t.Name()))
